@@ -1,0 +1,103 @@
+application {
+  config {
+    applicationType monolith
+    authenticationType jwt
+    baseName demo1
+    buildTool maven
+    cacheProvider ehcache
+    clientFramework react
+    clientTheme none
+    creationTimestamp 1722641966786
+    databaseType sql
+    devDatabaseType h2Disk
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation true
+    jhipsterVersion "8.6.0"
+    jwtSecretKey "EE669557B1F1AB7FE6E492B4161DF"
+    languages [es, en, pt-pt]
+    messageBroker false
+    microfrontends []
+    nativeLanguage es
+    packageName ar.edu.um.programacion2.jh
+    prodDatabaseType mysql
+    reactive false
+    searchEngine false
+    serviceDiscoveryType false
+    testFrameworks []
+    websocket false
+    withAdminUi true
+  }
+}
+
+entity Dispositivos {
+  codigo String required,
+  nombre String required,
+  descripcion String required,
+  precioBase BigDecimal required min(0),
+  moneda String required
+}
+relationship OneToMany {
+  Dispositivos{caracteristicas} to Caracteristicas{dispositivos(nombre)}
+}
+
+entity Caracteristicas {
+  nombre String required,
+  descripcion String required
+}
+relationship ManyToOne {
+  Caracteristicas{dispositivos(nombre) required} to Dispositivos
+}
+
+entity Personalizaciones {
+  nombre String required,
+  descripcion String required
+}
+relationship OneToMany {
+  Personalizaciones{opciones} to Opciones{personalizaciones(nombre)}
+}
+
+entity Opciones {
+  codigo String required,
+  nombre String required,
+  descripcion String required,
+  precioAdicional BigDecimal required min(0)
+}
+relationship ManyToOne {
+  Opciones{personalizaciones(nombre) required} to Personalizaciones
+}
+
+entity Adicionales {
+  nombre String required,
+  descripcion String required,
+  precio BigDecimal required min(0),
+  precioGratis BigDecimal required min(-1)
+}
+
+entity Venta {
+  precioFinal BigDecimal required min(0),
+  fechaVenta Instant required,
+  precioPersonalizaciones BigDecimal required min(0),
+  precioAdicionales BigDecimal required min(0)
+}
+relationship ManyToOne {
+  Venta{dispositivos(nombre) required} to Dispositivos
+}
+relationship ManyToMany {
+  Venta{personalizaciones} to Opciones{venta},
+  Venta{adicionales} to Adicionales{venta}
+}
+
+paginate Dispositivos with infinite-scroll
+paginate Caracteristicas with infinite-scroll
+paginate Personalizaciones with infinite-scroll
+paginate Opciones with infinite-scroll
+paginate Adicionales with infinite-scroll
+paginate Venta with infinite-scroll
+
+service Dispositivos with serviceClass
+service Caracteristicas with serviceClass
+service Personalizaciones with serviceClass
+service Opciones with serviceClass
+service Adicionales with serviceClass
+service Venta with serviceClass

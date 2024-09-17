@@ -24,7 +24,7 @@ public class MysqlTestContainer implements SqlTestContainer {
     public void afterPropertiesSet() {
         if (null == mysqlContainer) {
             mysqlContainer = new MySQLContainer<>("mysql:8.4.0")
-                .withDatabaseName("programacionFinal")
+                .withDatabaseName("demo1")
                 .withTmpFs(Collections.singletonMap("/testtmpfs", "rw"))
                 .withLogConsumer(new Slf4jLogConsumer(log))
                 .withReuse(true);
