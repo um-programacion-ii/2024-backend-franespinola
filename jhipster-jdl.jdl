@@ -1,0 +1,32 @@
+application {
+  config {
+    applicationType monolith
+    authenticationType jwt
+    baseName demo1
+    buildTool maven
+    cacheProvider ehcache
+    clientFramework react
+    clientTheme none
+    creationTimestamp 1722641966786
+    databaseType sql
+    devDatabaseType h2Disk
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation true
+    jhipsterVersion "8.6.0"
+	jwtSecretKey "YThlODgxNT..."
+    languages [es, en, pt-pt]
+    messageBroker false
+    microfrontends []
+    nativeLanguage es
+    packageName ar.edu.um.programacion2.jh
+    prodDatabaseType mysql
+    reactive false
+    searchEngine false
+    serviceDiscoveryType false
+    testFrameworks []
+    websocket false
+    withAdminUi true
+  }
+}
+
