@@ -15,7 +15,7 @@
 
 spring:
   application:
-    name: demo1
+    name: programacionFinal
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: test
@@ -36,13 +36,13 @@ spring:
           authorities-claim-name: auth
   task:
     execution:
-      thread-name-prefix: demo-1-task-
+      thread-name-prefix: programacion-final-task-
       pool:
         core-size: 1
         max-size: 50
         queue-capacity: 10000
     scheduling:
-      thread-name-prefix: demo-1-scheduling-
+      thread-name-prefix: programacion-final-scheduling-
       pool:
         size: 20
   thymeleaf:
@@ -59,9 +59,9 @@ server:
 # ===================================================================
 jhipster:
   clientApp:
-    name: 'demo1App'
+    name: 'programacionFinalApp'
   mail:
-    from: demo1@localhost.com
+    from: programacionFinal@localhost.com
     base-url: http://127.0.0.1:8080
   logging:
     # To test json console appender
@@ -75,7 +75,7 @@ jhipster:
     authentication:
       jwt:
         # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
-        base64-secret: YThlODgxNT...
+        base64-secret: YTFjYmU1YmE2OGEzNTM1ZTM5NmE2ZDU5YTZkNjgzZjg4YTNhMjliYTNlNzc5Y2IzMDlmMmRmMWFjYzQ3NWNhOWRkNDQxYzlmZmYyN2ZjZDcwOGFjZDA5OGNlZmE3MDhlNWIxYWQwMDExYzk3NjNiZmE5YjkzMzMyYzBmZTI3OTc=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 86400

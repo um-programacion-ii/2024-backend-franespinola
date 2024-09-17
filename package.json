@@ -1,8 +1,8 @@
 {
-  "name": "demo-1",
+  "name": "programacion-final",
   "version": "0.0.1-SNAPSHOT",
   "private": true,
-  "description": "Description for Demo 1",
+  "description": "Description for Programacion Final",
   "license": "UNLICENSED",
   "scripts": {
     "app:start": "./mvnw",
@@ -79,6 +79,7 @@
     "dayjs": "1.11.11",
     "lodash": "4.17.21",
     "path-browserify": "1.0.1",
+    "programacion-final": "file:",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "7.52.0",

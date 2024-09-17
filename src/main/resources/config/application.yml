@@ -90,7 +90,7 @@ management:
 
 spring:
   application:
-    name: demo1
+    name: programacionFinal
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file
@@ -145,13 +145,13 @@ spring:
           authorities-claim-name: auth
   task:
     execution:
-      thread-name-prefix: demo-1-task-
+      thread-name-prefix: programacion-final-task-
       pool:
         core-size: 2
         max-size: 50
         queue-capacity: 10000
     scheduling:
-      thread-name-prefix: demo-1-scheduling-
+      thread-name-prefix: programacion-final-scheduling-
       pool:
         size: 2
   thymeleaf:
@@ -182,7 +182,7 @@ info:
 
 jhipster:
   clientApp:
-    name: 'demo1App'
+    name: 'programacionFinalApp'
   # By default CORS is disabled. Uncomment to enable.
   # cors:
   #   allowed-origins: "http://localhost:8100,http://localhost:9000"
@@ -192,12 +192,12 @@ jhipster:
   #   allow-credentials: true
   #   max-age: 1800
   mail:
-    from: demo1@localhost
+    from: programacionFinal@localhost
   api-docs:
     default-include-pattern: /api/**
     management-include-pattern: /management/**
-    title: Demo 1 API
-    description: Demo 1 API documentation
+    title: Programacion Final API
+    description: Programacion Final API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:
