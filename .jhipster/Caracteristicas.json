@@ -1,0 +1,38 @@
+{
+  "annotations": {
+    "changelogDate": "20240918031058"
+  },
+  "applications": ["demo1"],
+  "fields": [
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Caracteristicas",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "dispositivos",
+      "relationshipName": "dispositivo",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityName": "dispositivos",
+      "otherEntityRelationshipName": "caracteristicas",
+      "relationshipName": "dispositivoCaracteristicas",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

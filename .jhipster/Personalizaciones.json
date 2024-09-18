@@ -1,0 +1,31 @@
+{
+  "annotations": {
+    "changelogDate": "20240918031158"
+  },
+  "applications": ["demo1"],
+  "fields": [
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Personalizaciones",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "opciones",
+      "otherEntityRelationshipName": "personalizacionOpciones",
+      "relationshipName": "opciones",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

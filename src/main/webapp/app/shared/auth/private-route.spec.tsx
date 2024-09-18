@@ -12,7 +12,7 @@ const TestComp = () => <div>Test</div>;
 
 describe('private-route component', () => {
   beforeAll(() => {
-    TranslatorContext.registerTranslations('es', {
+    TranslatorContext.registerTranslations('en', {
       'error.http.403': 'You are not authorized to access this page.',
     });
   });

@@ -3,11 +3,11 @@ import axios from 'axios';
 import sinon from 'sinon';
 import { TranslatorContext } from 'react-jhipster';
 
-import account, { updateAccount, reset } from './settings.reducer';
+import account, { reset, updateAccount } from './settings.reducer';
 
 describe('Settings reducer tests', () => {
   beforeAll(() => {
-    TranslatorContext.registerTranslations('es', {});
+    TranslatorContext.registerTranslations('en', {});
   });
 
   describe('Common tests', () => {

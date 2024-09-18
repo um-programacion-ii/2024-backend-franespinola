@@ -10,7 +10,7 @@ const MergeJsonWebpackPlugin = require('merge-jsons-webpack-plugin');
 const utils = require('./utils.js');
 const environment = require('./environment');
 
-const getTsLoaderRule = env => {
+const getTsLoaderRule = () => {
   const rules = [
     {
       loader: 'thread-loader',
@@ -101,11 +101,8 @@ module.exports = async options => {
           SERVER_API_URL: JSON.stringify(environment.SERVER_API_URL),
         }),
         new ESLintPlugin({
-          baseConfig: {
-            parserOptions: {
-              project: ['../tsconfig.json'],
-            },
-          },
+          configType: 'flat',
+          extensions: ['ts', 'tsx'],
         }),
         new ForkTsCheckerWebpackPlugin(),
         new CopyWebpackPlugin({
@@ -138,9 +135,7 @@ module.exports = async options => {
         new MergeJsonWebpackPlugin({
           output: {
             groupBy: [
-              { pattern: './src/main/webapp/i18n/es/*.json', fileName: './i18n/es.json' },
               { pattern: './src/main/webapp/i18n/en/*.json', fileName: './i18n/en.json' },
-              { pattern: './src/main/webapp/i18n/pt-pt/*.json', fileName: './i18n/pt-pt.json' },
               // jhipster-needle-i18n-language-webpack - JHipster will add/remove languages in this array
             ],
           },
