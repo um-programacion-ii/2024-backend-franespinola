@@ -9,7 +9,7 @@
     <!--
         Added the entity Venta.
     -->
-    <changeSet id="20240918032607-1" author="jhipster">
+    <changeSet id="20240918140133-1" author="jhipster">
         <createTable tableName="venta">
             <column name="id" type="bigint" autoIncrement="true" startWith="1500">
                 <constraints primaryKey="true" nullable="false"/>
@@ -34,7 +34,7 @@
         <dropDefaultValue tableName="venta" columnName="fecha_venta" columnDataType="${datetimeType}"/>
     </changeSet>
 
-    <changeSet id="20240918032607-1-relations" author="jhipster">
+    <changeSet id="20240918140133-1-relations" author="jhipster">
 
         <createTable tableName="rel_venta__personalizaciones_venta">
             <column name="personalizaciones_venta_id" type="bigint">
@@ -69,7 +69,7 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20240918032607-1-data" author="jhipster" context="faker">
+    <changeSet id="20240918140133-1-data" author="jhipster" context="faker">
         <loadData
                   file="config/liquibase/fake-data/venta.csv"
                   separator=";"

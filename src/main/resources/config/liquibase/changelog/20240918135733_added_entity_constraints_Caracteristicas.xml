@@ -6,22 +6,22 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     <!--
-        Added the constraints for entity Opciones.
+        Added the constraints for entity Caracteristicas.
     -->
-    <changeSet id="20240918032407-2" author="jhipster">
+    <changeSet id="20240918135733-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="personalizacion_id"
-                                 baseTableName="opciones"
-                                 constraintName="fk_opciones__personalizacion_id"
+        <addForeignKeyConstraint baseColumnNames="dispositivo_id"
+                                 baseTableName="caracteristicas"
+                                 constraintName="fk_caracteristicas__dispositivo_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="personalizaciones"
+                                 referencedTableName="dispositivos"
                                  />
 
-        <addForeignKeyConstraint baseColumnNames="personalizacion_opciones_id"
-                                 baseTableName="opciones"
-                                 constraintName="fk_opciones__personalizacion_opciones_id"
+        <addForeignKeyConstraint baseColumnNames="dispositivo_caracteristicas_id"
+                                 baseTableName="caracteristicas"
+                                 constraintName="fk_caracteristicas__dispositivo_caracteristicas_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="personalizaciones"
+                                 referencedTableName="dispositivos"
                                  />
     </changeSet>
 </databaseChangeLog>
