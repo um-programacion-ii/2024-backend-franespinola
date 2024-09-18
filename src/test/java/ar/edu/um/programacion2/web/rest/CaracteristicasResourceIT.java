@@ -458,4 +458,11 @@ class CaracteristicasResourceIT {
         return caracteristicasRepository.findById(caracteristicas.getId()).orElseThrow();
     }
 
-    protected void assertPersistedCaracteristicasToMat
+    protected void assertPersistedCaracteristicasToMatchAllProperties(Caracteristicas expectedCaracteristicas) {
+        assertCaracteristicasAllPropertiesEquals(expectedCaracteristicas, getPersistedCaracteristicas(expectedCaracteristicas));
+    }
+
+    protected void assertPersistedCaracteristicasToMatchUpdatableProperties(Caracteristicas expectedCaracteristicas) {
+        assertCaracteristicasAllUpdatablePropertiesEquals(expectedCaracteristicas, getPersistedCaracteristicas(expectedCaracteristicas));
+    }
+}

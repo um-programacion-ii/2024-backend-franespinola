@@ -83,4 +83,6 @@ class SpaWebFilterIT {
 
     @Test
     void getUnmappedThirdLevelFile() throws Exception {
-        mo
+        mockMvc.perform(get("/foo/another/bar.js")).andExpect(status().isForbidden());
+    }
+}

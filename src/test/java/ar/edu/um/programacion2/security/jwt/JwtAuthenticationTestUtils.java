@@ -99,4 +99,7 @@ public class JwtAuthenticationTestUtils {
     private static String calculateHMAC(String data, String key) throws Exception {
         SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.from(key).decode(), "HmacSHA512");
         Mac mac = Mac.getInstance("HmacSHA512");
-        mac.init(
+        mac.init(secretKeySpec);
+        return String.copyValueOf(Hex.encode(mac.doFinal(data.getBytes())));
+    }
+}

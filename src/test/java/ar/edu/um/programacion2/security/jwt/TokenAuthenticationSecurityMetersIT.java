@@ -82,4 +82,7 @@ class TokenAuthenticationSecurityMetersIT {
         mvc.perform(MockMvcRequestBuilders.get("/api/authenticate").header(AUTHORIZATION, BEARER + token));
     }
 
-    private double aggregate(Collection<Counter> coun
+    private double aggregate(Collection<Counter> counters) {
+        return counters.stream().mapToDouble(Counter::count).sum();
+    }
+}

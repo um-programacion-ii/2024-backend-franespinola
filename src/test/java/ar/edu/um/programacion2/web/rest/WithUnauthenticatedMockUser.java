@@ -18,3 +18,6 @@ public @interface WithUnauthenticatedMockUser {
         @Override
         public SecurityContext createSecurityContext(WithUnauthenticatedMockUser annotation) {
             return SecurityContextHolder.createEmptyContext();
+        }
+    }
+}

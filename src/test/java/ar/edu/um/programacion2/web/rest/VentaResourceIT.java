@@ -533,4 +533,18 @@ class VentaResourceIT {
     }
 
     protected void assertSameRepositoryCount(long countBefore) {
-        assertThat(countBefore).isEqualTo
+        assertThat(countBefore).isEqualTo(getRepositoryCount());
+    }
+
+    protected Venta getPersistedVenta(Venta venta) {
+        return ventaRepository.findById(venta.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedVentaToMatchAllProperties(Venta expectedVenta) {
+        assertVentaAllPropertiesEquals(expectedVenta, getPersistedVenta(expectedVenta));
+    }
+
+    protected void assertPersistedVentaToMatchUpdatableProperties(Venta expectedVenta) {
+        assertVentaAllUpdatablePropertiesEquals(expectedVenta, getPersistedVenta(expectedVenta));
+    }
+}

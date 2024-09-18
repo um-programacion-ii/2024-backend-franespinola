@@ -29,4 +29,5 @@ import tech.jhipster.config.JHipsterProperties;
         JwtAuthenticationTestUtils.class,
     }
 )
-public @interface Aut
+public @interface AuthenticationIntegrationTest {
+}

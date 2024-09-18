@@ -189,4 +189,14 @@ public final class TestUtil {
                 public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
                     Object val = update.getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(update, args);
                     if (val == null) {
-                        return original.getClass().getMethod(method.getName(), method.getParameterTypes
+                        return original.getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(original, args);
+                    }
+                    return val;
+                }
+            }
+        );
+        return (T) e.create();
+    }
+
+    private TestUtil() {}
+}

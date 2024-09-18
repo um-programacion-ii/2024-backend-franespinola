@@ -514,4 +514,14 @@ class DispositivosResourceIT {
     }
 
     protected Dispositivos getPersistedDispositivos(Dispositivos dispositivos) {
-        return dispositivosRepository.findById(
+        return dispositivosRepository.findById(dispositivos.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedDispositivosToMatchAllProperties(Dispositivos expectedDispositivos) {
+        assertDispositivosAllPropertiesEquals(expectedDispositivos, getPersistedDispositivos(expectedDispositivos));
+    }
+
+    protected void assertPersistedDispositivosToMatchUpdatableProperties(Dispositivos expectedDispositivos) {
+        assertDispositivosAllUpdatablePropertiesEquals(expectedDispositivos, getPersistedDispositivos(expectedDispositivos));
+    }
+}

@@ -436,4 +436,13 @@ class PersonalizacionesResourceIT {
     }
 
     protected void assertPersistedPersonalizacionesToMatchAllProperties(Personalizaciones expectedPersonalizaciones) {
-        assertPerso
+        assertPersonalizacionesAllPropertiesEquals(expectedPersonalizaciones, getPersistedPersonalizaciones(expectedPersonalizaciones));
+    }
+
+    protected void assertPersistedPersonalizacionesToMatchUpdatableProperties(Personalizaciones expectedPersonalizaciones) {
+        assertPersonalizacionesAllUpdatablePropertiesEquals(
+            expectedPersonalizaciones,
+            getPersistedPersonalizaciones(expectedPersonalizaciones)
+        );
+    }
+}

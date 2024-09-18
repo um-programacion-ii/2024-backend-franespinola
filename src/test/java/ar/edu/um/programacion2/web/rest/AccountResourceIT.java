@@ -761,4 +761,24 @@ class AccountResourceIT {
             .andExpect(status().isBadRequest());
 
         User updatedUser = userRepository.findOneByLogin(user.getLogin()).orElse(null);
-      
+        assertThat(passwordEncoder.matches(keyAndPassword.getNewPassword(), updatedUser.getPassword())).isFalse();
+
+        userService.deleteUser("finish-password-reset-too-small");
+    }
+
+    @Test
+    @Transactional
+    void testFinishPasswordResetWrongKey() throws Exception {
+        KeyAndPasswordVM keyAndPassword = new KeyAndPasswordVM();
+        keyAndPassword.setKey("wrong reset key");
+        keyAndPassword.setNewPassword("new password");
+
+        restAccountMockMvc
+            .perform(
+                post("/api/account/reset-password/finish")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(keyAndPassword))
+            )
+            .andExpect(status().isInternalServerError());
+    }
+}

@@ -489,4 +489,14 @@ class AdicionalesResourceIT {
     }
 
     protected Adicionales getPersistedAdicionales(Adicionales adicionales) {
-        return adicionalesRepository.findById(adicionale
+        return adicionalesRepository.findById(adicionales.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedAdicionalesToMatchAllProperties(Adicionales expectedAdicionales) {
+        assertAdicionalesAllPropertiesEquals(expectedAdicionales, getPersistedAdicionales(expectedAdicionales));
+    }
+
+    protected void assertPersistedAdicionalesToMatchUpdatableProperties(Adicionales expectedAdicionales) {
+        assertAdicionalesAllUpdatablePropertiesEquals(expectedAdicionales, getPersistedAdicionales(expectedAdicionales));
+    }
+}

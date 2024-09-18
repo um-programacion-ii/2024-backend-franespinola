@@ -172,4 +172,8 @@ class UserMapperTest {
     }
 
     @Test
-    v
+    void testUserFromId() {
+        assertThat(userMapper.userFromId(DEFAULT_ID).getId()).isEqualTo(DEFAULT_ID);
+        assertThat(userMapper.userFromId(null)).isNull();
+    }
+}

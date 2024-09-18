@@ -228,4 +228,10 @@ class MailServiceIT {
         if (matcher2.matches()) {
             javaLangKey = matcher2.group(1) + "_" + matcher2.group(2).toUpperCase();
         }
-        Matcher matcher
+        Matcher matcher3 = PATTERN_LOCALE_3.matcher(langKey);
+        if (matcher3.matches()) {
+            javaLangKey = matcher3.group(1) + "_" + matcher3.group(2) + "_" + matcher3.group(3).toUpperCase();
+        }
+        return javaLangKey;
+    }
+}

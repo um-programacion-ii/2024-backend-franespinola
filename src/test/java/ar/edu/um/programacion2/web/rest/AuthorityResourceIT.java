@@ -200,4 +200,7 @@ class AuthorityResourceIT {
         assertAuthorityAllPropertiesEquals(expectedAuthority, getPersistedAuthority(expectedAuthority));
     }
 
-    protected void as
+    protected void assertPersistedAuthorityToMatchUpdatableProperties(Authority expectedAuthority) {
+        assertAuthorityAllUpdatablePropertiesEquals(expectedAuthority, getPersistedAuthority(expectedAuthority));
+    }
+}

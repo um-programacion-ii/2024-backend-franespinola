@@ -125,3 +125,8 @@ public class DateTimeWrapper implements Serializable {
             "id=" + id +
             ", instant=" + instant +
             ", localDateTime=" + localDateTime +
+            ", offsetDateTime=" + offsetDateTime +
+            ", zonedDateTime=" + zonedDateTime +
+            '}';
+    }
+}

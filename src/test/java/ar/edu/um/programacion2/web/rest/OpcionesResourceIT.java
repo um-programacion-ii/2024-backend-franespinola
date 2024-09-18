@@ -506,4 +506,15 @@ class OpcionesResourceIT {
         assertThat(countBefore).isEqualTo(getRepositoryCount());
     }
 
-    protected Opciones getPersistedOpciones(Opciones opc
+    protected Opciones getPersistedOpciones(Opciones opciones) {
+        return opcionesRepository.findById(opciones.getId()).orElseThrow();
+    }
+
+    protected void assertPersistedOpcionesToMatchAllProperties(Opciones expectedOpciones) {
+        assertOpcionesAllPropertiesEquals(expectedOpciones, getPersistedOpciones(expectedOpciones));
+    }
+
+    protected void assertPersistedOpcionesToMatchUpdatableProperties(Opciones expectedOpciones) {
+        assertOpcionesAllUpdatablePropertiesEquals(expectedOpciones, getPersistedOpciones(expectedOpciones));
+    }
+}

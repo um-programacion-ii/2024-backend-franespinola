@@ -111,4 +111,7 @@ class ExceptionTranslatorIT {
             .perform(get("/api/exception-translator-test/internal-server-error"))
             .andExpect(status().isInternalServerError())
             .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-            .andExpect(jsonPath("$.messag
+            .andExpect(jsonPath("$.message").value("error.http.500"))
+            .andExpect(jsonPath("$.title").value("Internal Server Error"));
+    }
+}
