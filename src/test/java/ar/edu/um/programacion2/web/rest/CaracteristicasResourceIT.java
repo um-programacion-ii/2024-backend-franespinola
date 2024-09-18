@@ -11,6 +11,8 @@ import ar.edu.um.programacion2.IntegrationTest;
 import ar.edu.um.programacion2.domain.Caracteristicas;
 import ar.edu.um.programacion2.domain.Dispositivos;
 import ar.edu.um.programacion2.repository.CaracteristicasRepository;
+import ar.edu.um.programacion2.service.dto.CaracteristicasDTO;
+import ar.edu.um.programacion2.service.mapper.CaracteristicasMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
@@ -50,6 +52,9 @@ class CaracteristicasResourceIT {
 
     @Autowired
     private CaracteristicasRepository caracteristicasRepository;
+
+    @Autowired
+    private CaracteristicasMapper caracteristicasMapper;
 
     @Autowired
     private EntityManager em;
@@ -121,18 +126,20 @@ class CaracteristicasResourceIT {
     void createCaracteristicas() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Caracteristicas
-        var returnedCaracteristicas = om.readValue(
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+        var returnedCaracteristicasDTO = om.readValue(
             restCaracteristicasMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicas)))
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicasDTO)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Caracteristicas.class
+            CaracteristicasDTO.class
         );
 
         // Validate the Caracteristicas in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedCaracteristicas = caracteristicasMapper.toEntity(returnedCaracteristicasDTO);
         assertCaracteristicasUpdatableFieldsEquals(returnedCaracteristicas, getPersistedCaracteristicas(returnedCaracteristicas));
 
         insertedCaracteristicas = returnedCaracteristicas;
@@ -143,12 +150,13 @@ class CaracteristicasResourceIT {
     void createCaracteristicasWithExistingId() throws Exception {
         // Create the Caracteristicas with an existing ID
         caracteristicas.setId(1L);
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCaracteristicasMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicas)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicasDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Caracteristicas in the database
@@ -163,9 +171,10 @@ class CaracteristicasResourceIT {
         caracteristicas.setNombre(null);
 
         // Create the Caracteristicas, which fails.
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
 
         restCaracteristicasMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicas)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicasDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -179,9 +188,10 @@ class CaracteristicasResourceIT {
         caracteristicas.setDescripcion(null);
 
         // Create the Caracteristicas, which fails.
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
 
         restCaracteristicasMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicas)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicasDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -239,12 +249,13 @@ class CaracteristicasResourceIT {
         // Disconnect from session so that the updates on updatedCaracteristicas are not directly saved in db
         em.detach(updatedCaracteristicas);
         updatedCaracteristicas.nombre(UPDATED_NOMBRE).descripcion(UPDATED_DESCRIPCION);
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(updatedCaracteristicas);
 
         restCaracteristicasMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedCaracteristicas.getId())
+                put(ENTITY_API_URL_ID, caracteristicasDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedCaracteristicas))
+                    .content(om.writeValueAsBytes(caracteristicasDTO))
             )
             .andExpect(status().isOk());
 
@@ -259,12 +270,15 @@ class CaracteristicasResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         caracteristicas.setId(longCount.incrementAndGet());
 
+        // Create the Caracteristicas
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCaracteristicasMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, caracteristicas.getId())
+                put(ENTITY_API_URL_ID, caracteristicasDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(caracteristicas))
+                    .content(om.writeValueAsBytes(caracteristicasDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -278,12 +292,15 @@ class CaracteristicasResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         caracteristicas.setId(longCount.incrementAndGet());
 
+        // Create the Caracteristicas
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCaracteristicasMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(caracteristicas))
+                    .content(om.writeValueAsBytes(caracteristicasDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -297,9 +314,12 @@ class CaracteristicasResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         caracteristicas.setId(longCount.incrementAndGet());
 
+        // Create the Caracteristicas
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCaracteristicasMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicas)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(caracteristicasDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Caracteristicas in the database
@@ -374,12 +394,15 @@ class CaracteristicasResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         caracteristicas.setId(longCount.incrementAndGet());
 
+        // Create the Caracteristicas
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCaracteristicasMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, caracteristicas.getId())
+                patch(ENTITY_API_URL_ID, caracteristicasDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(caracteristicas))
+                    .content(om.writeValueAsBytes(caracteristicasDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -393,12 +416,15 @@ class CaracteristicasResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         caracteristicas.setId(longCount.incrementAndGet());
 
+        // Create the Caracteristicas
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCaracteristicasMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(caracteristicas))
+                    .content(om.writeValueAsBytes(caracteristicasDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -412,9 +438,12 @@ class CaracteristicasResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         caracteristicas.setId(longCount.incrementAndGet());
 
+        // Create the Caracteristicas
+        CaracteristicasDTO caracteristicasDTO = caracteristicasMapper.toDto(caracteristicas);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCaracteristicasMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(caracteristicas)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(caracteristicasDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Caracteristicas in the database

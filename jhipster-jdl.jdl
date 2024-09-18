@@ -94,3 +94,10 @@ service Personalizaciones with serviceClass
 service Opciones with serviceClass
 service Adicionales with serviceClass
 service Venta with serviceClass
+
+dto Dispositivos with mapstruct
+dto Caracteristicas with mapstruct
+dto Personalizaciones with mapstruct
+dto Opciones with mapstruct
+dto Adicionales with mapstruct
+dto Venta with mapstruct

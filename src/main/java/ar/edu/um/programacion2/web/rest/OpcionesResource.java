@@ -1,8 +1,8 @@
 package ar.edu.um.programacion2.web.rest;
 
-import ar.edu.um.programacion2.domain.Opciones;
 import ar.edu.um.programacion2.repository.OpcionesRepository;
 import ar.edu.um.programacion2.service.OpcionesService;
+import ar.edu.um.programacion2.service.dto.OpcionesDTO;
 import ar.edu.um.programacion2.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -50,42 +50,42 @@ public class OpcionesResource {
     /**
      * {@code POST  /opciones} : Create a new opciones.
      *
-     * @param opciones the opciones to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new opciones, or with status {@code 400 (Bad Request)} if the opciones has already an ID.
+     * @param opcionesDTO the opcionesDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new opcionesDTO, or with status {@code 400 (Bad Request)} if the opciones has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<Opciones> createOpciones(@Valid @RequestBody Opciones opciones) throws URISyntaxException {
-        LOG.debug("REST request to save Opciones : {}", opciones);
-        if (opciones.getId() != null) {
+    public ResponseEntity<OpcionesDTO> createOpciones(@Valid @RequestBody OpcionesDTO opcionesDTO) throws URISyntaxException {
+        LOG.debug("REST request to save Opciones : {}", opcionesDTO);
+        if (opcionesDTO.getId() != null) {
             throw new BadRequestAlertException("A new opciones cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        opciones = opcionesService.save(opciones);
-        return ResponseEntity.created(new URI("/api/opciones/" + opciones.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, opciones.getId().toString()))
-            .body(opciones);
+        opcionesDTO = opcionesService.save(opcionesDTO);
+        return ResponseEntity.created(new URI("/api/opciones/" + opcionesDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, opcionesDTO.getId().toString()))
+            .body(opcionesDTO);
     }
 
     /**
      * {@code PUT  /opciones/:id} : Updates an existing opciones.
      *
-     * @param id the id of the opciones to save.
-     * @param opciones the opciones to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated opciones,
-     * or with status {@code 400 (Bad Request)} if the opciones is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the opciones couldn't be updated.
+     * @param id the id of the opcionesDTO to save.
+     * @param opcionesDTO the opcionesDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated opcionesDTO,
+     * or with status {@code 400 (Bad Request)} if the opcionesDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the opcionesDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Opciones> updateOpciones(
+    public ResponseEntity<OpcionesDTO> updateOpciones(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Opciones opciones
+        @Valid @RequestBody OpcionesDTO opcionesDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to update Opciones : {}, {}", id, opciones);
-        if (opciones.getId() == null) {
+        LOG.debug("REST request to update Opciones : {}, {}", id, opcionesDTO);
+        if (opcionesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, opciones.getId())) {
+        if (!Objects.equals(id, opcionesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -93,33 +93,33 @@ public class OpcionesResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        opciones = opcionesService.update(opciones);
+        opcionesDTO = opcionesService.update(opcionesDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, opciones.getId().toString()))
-            .body(opciones);
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, opcionesDTO.getId().toString()))
+            .body(opcionesDTO);
     }
 
     /**
      * {@code PATCH  /opciones/:id} : Partial updates given fields of an existing opciones, field will ignore if it is null
      *
-     * @param id the id of the opciones to save.
-     * @param opciones the opciones to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated opciones,
-     * or with status {@code 400 (Bad Request)} if the opciones is not valid,
-     * or with status {@code 404 (Not Found)} if the opciones is not found,
-     * or with status {@code 500 (Internal Server Error)} if the opciones couldn't be updated.
+     * @param id the id of the opcionesDTO to save.
+     * @param opcionesDTO the opcionesDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated opcionesDTO,
+     * or with status {@code 400 (Bad Request)} if the opcionesDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the opcionesDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the opcionesDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Opciones> partialUpdateOpciones(
+    public ResponseEntity<OpcionesDTO> partialUpdateOpciones(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Opciones opciones
+        @NotNull @RequestBody OpcionesDTO opcionesDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to partial update Opciones partially : {}, {}", id, opciones);
-        if (opciones.getId() == null) {
+        LOG.debug("REST request to partial update Opciones partially : {}, {}", id, opcionesDTO);
+        if (opcionesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, opciones.getId())) {
+        if (!Objects.equals(id, opcionesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -127,11 +127,11 @@ public class OpcionesResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Opciones> result = opcionesService.partialUpdate(opciones);
+        Optional<OpcionesDTO> result = opcionesService.partialUpdate(opcionesDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, opciones.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, opcionesDTO.getId().toString())
         );
     }
 
@@ -142,9 +142,9 @@ public class OpcionesResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of opciones in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<Opciones>> getAllOpciones(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<OpcionesDTO>> getAllOpciones(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get a page of Opciones");
-        Page<Opciones> page = opcionesService.findAll(pageable);
+        Page<OpcionesDTO> page = opcionesService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -152,20 +152,20 @@ public class OpcionesResource {
     /**
      * {@code GET  /opciones/:id} : get the "id" opciones.
      *
-     * @param id the id of the opciones to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the opciones, or with status {@code 404 (Not Found)}.
+     * @param id the id of the opcionesDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the opcionesDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Opciones> getOpciones(@PathVariable("id") Long id) {
+    public ResponseEntity<OpcionesDTO> getOpciones(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Opciones : {}", id);
-        Optional<Opciones> opciones = opcionesService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(opciones);
+        Optional<OpcionesDTO> opcionesDTO = opcionesService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(opcionesDTO);
     }
 
     /**
      * {@code DELETE  /opciones/:id} : delete the "id" opciones.
      *
-     * @param id the id of the opciones to delete.
+     * @param id the id of the opcionesDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")

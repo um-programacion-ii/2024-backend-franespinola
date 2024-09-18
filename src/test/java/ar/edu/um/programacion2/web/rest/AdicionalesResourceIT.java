@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import ar.edu.um.programacion2.IntegrationTest;
 import ar.edu.um.programacion2.domain.Adicionales;
 import ar.edu.um.programacion2.repository.AdicionalesRepository;
+import ar.edu.um.programacion2.service.dto.AdicionalesDTO;
+import ar.edu.um.programacion2.service.mapper.AdicionalesMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -57,6 +59,9 @@ class AdicionalesResourceIT {
 
     @Autowired
     private AdicionalesRepository adicionalesRepository;
+
+    @Autowired
+    private AdicionalesMapper adicionalesMapper;
 
     @Autowired
     private EntityManager em;
@@ -114,18 +119,20 @@ class AdicionalesResourceIT {
     void createAdicionales() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Adicionales
-        var returnedAdicionales = om.readValue(
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+        var returnedAdicionalesDTO = om.readValue(
             restAdicionalesMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Adicionales.class
+            AdicionalesDTO.class
         );
 
         // Validate the Adicionales in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedAdicionales = adicionalesMapper.toEntity(returnedAdicionalesDTO);
         assertAdicionalesUpdatableFieldsEquals(returnedAdicionales, getPersistedAdicionales(returnedAdicionales));
 
         insertedAdicionales = returnedAdicionales;
@@ -136,12 +143,13 @@ class AdicionalesResourceIT {
     void createAdicionalesWithExistingId() throws Exception {
         // Create the Adicionales with an existing ID
         adicionales.setId(1L);
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restAdicionalesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Adicionales in the database
@@ -156,9 +164,10 @@ class AdicionalesResourceIT {
         adicionales.setNombre(null);
 
         // Create the Adicionales, which fails.
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
 
         restAdicionalesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -172,9 +181,10 @@ class AdicionalesResourceIT {
         adicionales.setDescripcion(null);
 
         // Create the Adicionales, which fails.
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
 
         restAdicionalesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -188,9 +198,10 @@ class AdicionalesResourceIT {
         adicionales.setPrecio(null);
 
         // Create the Adicionales, which fails.
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
 
         restAdicionalesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -204,9 +215,10 @@ class AdicionalesResourceIT {
         adicionales.setPrecioGratis(null);
 
         // Create the Adicionales, which fails.
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
 
         restAdicionalesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -272,12 +284,13 @@ class AdicionalesResourceIT {
             .descripcion(UPDATED_DESCRIPCION)
             .precio(UPDATED_PRECIO)
             .precioGratis(UPDATED_PRECIO_GRATIS);
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(updatedAdicionales);
 
         restAdicionalesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedAdicionales.getId())
+                put(ENTITY_API_URL_ID, adicionalesDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedAdicionales))
+                    .content(om.writeValueAsBytes(adicionalesDTO))
             )
             .andExpect(status().isOk());
 
@@ -292,12 +305,15 @@ class AdicionalesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         adicionales.setId(longCount.incrementAndGet());
 
+        // Create the Adicionales
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAdicionalesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, adicionales.getId())
+                put(ENTITY_API_URL_ID, adicionalesDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(adicionales))
+                    .content(om.writeValueAsBytes(adicionalesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -311,12 +327,15 @@ class AdicionalesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         adicionales.setId(longCount.incrementAndGet());
 
+        // Create the Adicionales
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAdicionalesMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(adicionales))
+                    .content(om.writeValueAsBytes(adicionalesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -330,9 +349,12 @@ class AdicionalesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         adicionales.setId(longCount.incrementAndGet());
 
+        // Create the Adicionales
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAdicionalesMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionales)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Adicionales in the database
@@ -408,12 +430,15 @@ class AdicionalesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         adicionales.setId(longCount.incrementAndGet());
 
+        // Create the Adicionales
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAdicionalesMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, adicionales.getId())
+                patch(ENTITY_API_URL_ID, adicionalesDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(adicionales))
+                    .content(om.writeValueAsBytes(adicionalesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -427,12 +452,15 @@ class AdicionalesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         adicionales.setId(longCount.incrementAndGet());
 
+        // Create the Adicionales
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAdicionalesMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(adicionales))
+                    .content(om.writeValueAsBytes(adicionalesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -446,9 +474,12 @@ class AdicionalesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         adicionales.setId(longCount.incrementAndGet());
 
+        // Create the Adicionales
+        AdicionalesDTO adicionalesDTO = adicionalesMapper.toDto(adicionales);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAdicionalesMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(adicionales)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(adicionalesDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Adicionales in the database

@@ -2,6 +2,8 @@ package ar.edu.um.programacion2.service;
 
 import ar.edu.um.programacion2.domain.Adicionales;
 import ar.edu.um.programacion2.repository.AdicionalesRepository;
+import ar.edu.um.programacion2.service.dto.AdicionalesDTO;
+import ar.edu.um.programacion2.service.mapper.AdicionalesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,60 +23,57 @@ public class AdicionalesService {
 
     private final AdicionalesRepository adicionalesRepository;
 
-    public AdicionalesService(AdicionalesRepository adicionalesRepository) {
+    private final AdicionalesMapper adicionalesMapper;
+
+    public AdicionalesService(AdicionalesRepository adicionalesRepository, AdicionalesMapper adicionalesMapper) {
         this.adicionalesRepository = adicionalesRepository;
+        this.adicionalesMapper = adicionalesMapper;
     }
 
     /**
      * Save a adicionales.
      *
-     * @param adicionales the entity to save.
+     * @param adicionalesDTO the entity to save.
      * @return the persisted entity.
      */
-    public Adicionales save(Adicionales adicionales) {
-        LOG.debug("Request to save Adicionales : {}", adicionales);
-        return adicionalesRepository.save(adicionales);
+    public AdicionalesDTO save(AdicionalesDTO adicionalesDTO) {
+        LOG.debug("Request to save Adicionales : {}", adicionalesDTO);
+        Adicionales adicionales = adicionalesMapper.toEntity(adicionalesDTO);
+        adicionales = adicionalesRepository.save(adicionales);
+        return adicionalesMapper.toDto(adicionales);
     }
 
     /**
      * Update a adicionales.
      *
-     * @param adicionales the entity to save.
+     * @param adicionalesDTO the entity to save.
      * @return the persisted entity.
      */
-    public Adicionales update(Adicionales adicionales) {
-        LOG.debug("Request to update Adicionales : {}", adicionales);
-        return adicionalesRepository.save(adicionales);
+    public AdicionalesDTO update(AdicionalesDTO adicionalesDTO) {
+        LOG.debug("Request to update Adicionales : {}", adicionalesDTO);
+        Adicionales adicionales = adicionalesMapper.toEntity(adicionalesDTO);
+        adicionales = adicionalesRepository.save(adicionales);
+        return adicionalesMapper.toDto(adicionales);
     }
 
     /**
      * Partially update a adicionales.
      *
-     * @param adicionales the entity to update partially.
+     * @param adicionalesDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Adicionales> partialUpdate(Adicionales adicionales) {
-        LOG.debug("Request to partially update Adicionales : {}", adicionales);
+    public Optional<AdicionalesDTO> partialUpdate(AdicionalesDTO adicionalesDTO) {
+        LOG.debug("Request to partially update Adicionales : {}", adicionalesDTO);
 
         return adicionalesRepository
-            .findById(adicionales.getId())
+            .findById(adicionalesDTO.getId())
             .map(existingAdicionales -> {
-                if (adicionales.getNombre() != null) {
-                    existingAdicionales.setNombre(adicionales.getNombre());
-                }
-                if (adicionales.getDescripcion() != null) {
-                    existingAdicionales.setDescripcion(adicionales.getDescripcion());
-                }
-                if (adicionales.getPrecio() != null) {
-                    existingAdicionales.setPrecio(adicionales.getPrecio());
-                }
-                if (adicionales.getPrecioGratis() != null) {
-                    existingAdicionales.setPrecioGratis(adicionales.getPrecioGratis());
-                }
+                adicionalesMapper.partialUpdate(existingAdicionales, adicionalesDTO);
 
                 return existingAdicionales;
             })
-            .map(adicionalesRepository::save);
+            .map(adicionalesRepository::save)
+            .map(adicionalesMapper::toDto);
     }
 
     /**
@@ -84,9 +83,9 @@ public class AdicionalesService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Adicionales> findAll(Pageable pageable) {
+    public Page<AdicionalesDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Adicionales");
-        return adicionalesRepository.findAll(pageable);
+        return adicionalesRepository.findAll(pageable).map(adicionalesMapper::toDto);
     }
 
     /**
@@ -96,9 +95,9 @@ public class AdicionalesService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Adicionales> findOne(Long id) {
+    public Optional<AdicionalesDTO> findOne(Long id) {
         LOG.debug("Request to get Adicionales : {}", id);
-        return adicionalesRepository.findById(id);
+        return adicionalesRepository.findById(id).map(adicionalesMapper::toDto);
     }
 
     /**

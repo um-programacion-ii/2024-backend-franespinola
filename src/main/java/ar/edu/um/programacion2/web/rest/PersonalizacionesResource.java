@@ -1,8 +1,8 @@
 package ar.edu.um.programacion2.web.rest;
 
-import ar.edu.um.programacion2.domain.Personalizaciones;
 import ar.edu.um.programacion2.repository.PersonalizacionesRepository;
 import ar.edu.um.programacion2.service.PersonalizacionesService;
+import ar.edu.um.programacion2.service.dto.PersonalizacionesDTO;
 import ar.edu.um.programacion2.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -53,43 +53,43 @@ public class PersonalizacionesResource {
     /**
      * {@code POST  /personalizaciones} : Create a new personalizaciones.
      *
-     * @param personalizaciones the personalizaciones to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new personalizaciones, or with status {@code 400 (Bad Request)} if the personalizaciones has already an ID.
+     * @param personalizacionesDTO the personalizacionesDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new personalizacionesDTO, or with status {@code 400 (Bad Request)} if the personalizaciones has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<Personalizaciones> createPersonalizaciones(@Valid @RequestBody Personalizaciones personalizaciones)
+    public ResponseEntity<PersonalizacionesDTO> createPersonalizaciones(@Valid @RequestBody PersonalizacionesDTO personalizacionesDTO)
         throws URISyntaxException {
-        LOG.debug("REST request to save Personalizaciones : {}", personalizaciones);
-        if (personalizaciones.getId() != null) {
+        LOG.debug("REST request to save Personalizaciones : {}", personalizacionesDTO);
+        if (personalizacionesDTO.getId() != null) {
             throw new BadRequestAlertException("A new personalizaciones cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        personalizaciones = personalizacionesService.save(personalizaciones);
-        return ResponseEntity.created(new URI("/api/personalizaciones/" + personalizaciones.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, personalizaciones.getId().toString()))
-            .body(personalizaciones);
+        personalizacionesDTO = personalizacionesService.save(personalizacionesDTO);
+        return ResponseEntity.created(new URI("/api/personalizaciones/" + personalizacionesDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, personalizacionesDTO.getId().toString()))
+            .body(personalizacionesDTO);
     }
 
     /**
      * {@code PUT  /personalizaciones/:id} : Updates an existing personalizaciones.
      *
-     * @param id the id of the personalizaciones to save.
-     * @param personalizaciones the personalizaciones to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated personalizaciones,
-     * or with status {@code 400 (Bad Request)} if the personalizaciones is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the personalizaciones couldn't be updated.
+     * @param id the id of the personalizacionesDTO to save.
+     * @param personalizacionesDTO the personalizacionesDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated personalizacionesDTO,
+     * or with status {@code 400 (Bad Request)} if the personalizacionesDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the personalizacionesDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Personalizaciones> updatePersonalizaciones(
+    public ResponseEntity<PersonalizacionesDTO> updatePersonalizaciones(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Personalizaciones personalizaciones
+        @Valid @RequestBody PersonalizacionesDTO personalizacionesDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to update Personalizaciones : {}, {}", id, personalizaciones);
-        if (personalizaciones.getId() == null) {
+        LOG.debug("REST request to update Personalizaciones : {}, {}", id, personalizacionesDTO);
+        if (personalizacionesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, personalizaciones.getId())) {
+        if (!Objects.equals(id, personalizacionesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -97,33 +97,33 @@ public class PersonalizacionesResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        personalizaciones = personalizacionesService.update(personalizaciones);
+        personalizacionesDTO = personalizacionesService.update(personalizacionesDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, personalizaciones.getId().toString()))
-            .body(personalizaciones);
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, personalizacionesDTO.getId().toString()))
+            .body(personalizacionesDTO);
     }
 
     /**
      * {@code PATCH  /personalizaciones/:id} : Partial updates given fields of an existing personalizaciones, field will ignore if it is null
      *
-     * @param id the id of the personalizaciones to save.
-     * @param personalizaciones the personalizaciones to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated personalizaciones,
-     * or with status {@code 400 (Bad Request)} if the personalizaciones is not valid,
-     * or with status {@code 404 (Not Found)} if the personalizaciones is not found,
-     * or with status {@code 500 (Internal Server Error)} if the personalizaciones couldn't be updated.
+     * @param id the id of the personalizacionesDTO to save.
+     * @param personalizacionesDTO the personalizacionesDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated personalizacionesDTO,
+     * or with status {@code 400 (Bad Request)} if the personalizacionesDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the personalizacionesDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the personalizacionesDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Personalizaciones> partialUpdatePersonalizaciones(
+    public ResponseEntity<PersonalizacionesDTO> partialUpdatePersonalizaciones(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Personalizaciones personalizaciones
+        @NotNull @RequestBody PersonalizacionesDTO personalizacionesDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to partial update Personalizaciones partially : {}, {}", id, personalizaciones);
-        if (personalizaciones.getId() == null) {
+        LOG.debug("REST request to partial update Personalizaciones partially : {}, {}", id, personalizacionesDTO);
+        if (personalizacionesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, personalizaciones.getId())) {
+        if (!Objects.equals(id, personalizacionesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -131,11 +131,11 @@ public class PersonalizacionesResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Personalizaciones> result = personalizacionesService.partialUpdate(personalizaciones);
+        Optional<PersonalizacionesDTO> result = personalizacionesService.partialUpdate(personalizacionesDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, personalizaciones.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, personalizacionesDTO.getId().toString())
         );
     }
 
@@ -146,11 +146,11 @@ public class PersonalizacionesResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of personalizaciones in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<Personalizaciones>> getAllPersonalizaciones(
+    public ResponseEntity<List<PersonalizacionesDTO>> getAllPersonalizaciones(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get a page of Personalizaciones");
-        Page<Personalizaciones> page = personalizacionesService.findAll(pageable);
+        Page<PersonalizacionesDTO> page = personalizacionesService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -158,20 +158,20 @@ public class PersonalizacionesResource {
     /**
      * {@code GET  /personalizaciones/:id} : get the "id" personalizaciones.
      *
-     * @param id the id of the personalizaciones to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the personalizaciones, or with status {@code 404 (Not Found)}.
+     * @param id the id of the personalizacionesDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the personalizacionesDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Personalizaciones> getPersonalizaciones(@PathVariable("id") Long id) {
+    public ResponseEntity<PersonalizacionesDTO> getPersonalizaciones(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Personalizaciones : {}", id);
-        Optional<Personalizaciones> personalizaciones = personalizacionesService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(personalizaciones);
+        Optional<PersonalizacionesDTO> personalizacionesDTO = personalizacionesService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(personalizacionesDTO);
     }
 
     /**
      * {@code DELETE  /personalizaciones/:id} : delete the "id" personalizaciones.
      *
-     * @param id the id of the personalizaciones to delete.
+     * @param id the id of the personalizacionesDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")

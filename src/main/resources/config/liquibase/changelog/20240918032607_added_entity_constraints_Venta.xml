@@ -8,7 +8,7 @@
     <!--
         Added the constraints for entity Venta.
     -->
-    <changeSet id="20240918031458-2" author="jhipster">
+    <changeSet id="20240918032607-2" author="jhipster">
 
         <addForeignKeyConstraint baseColumnNames="dispositivo_venta_id"
                                  baseTableName="venta"

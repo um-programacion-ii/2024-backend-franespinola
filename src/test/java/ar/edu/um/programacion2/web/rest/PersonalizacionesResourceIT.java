@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import ar.edu.um.programacion2.IntegrationTest;
 import ar.edu.um.programacion2.domain.Personalizaciones;
 import ar.edu.um.programacion2.repository.PersonalizacionesRepository;
+import ar.edu.um.programacion2.service.dto.PersonalizacionesDTO;
+import ar.edu.um.programacion2.service.mapper.PersonalizacionesMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
@@ -49,6 +51,9 @@ class PersonalizacionesResourceIT {
 
     @Autowired
     private PersonalizacionesRepository personalizacionesRepository;
+
+    @Autowired
+    private PersonalizacionesMapper personalizacionesMapper;
 
     @Autowired
     private EntityManager em;
@@ -98,18 +103,20 @@ class PersonalizacionesResourceIT {
     void createPersonalizaciones() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Personalizaciones
-        var returnedPersonalizaciones = om.readValue(
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+        var returnedPersonalizacionesDTO = om.readValue(
             restPersonalizacionesMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizaciones)))
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizacionesDTO)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Personalizaciones.class
+            PersonalizacionesDTO.class
         );
 
         // Validate the Personalizaciones in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedPersonalizaciones = personalizacionesMapper.toEntity(returnedPersonalizacionesDTO);
         assertPersonalizacionesUpdatableFieldsEquals(returnedPersonalizaciones, getPersistedPersonalizaciones(returnedPersonalizaciones));
 
         insertedPersonalizaciones = returnedPersonalizaciones;
@@ -120,12 +127,13 @@ class PersonalizacionesResourceIT {
     void createPersonalizacionesWithExistingId() throws Exception {
         // Create the Personalizaciones with an existing ID
         personalizaciones.setId(1L);
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPersonalizacionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizaciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizacionesDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Personalizaciones in the database
@@ -140,9 +148,10 @@ class PersonalizacionesResourceIT {
         personalizaciones.setNombre(null);
 
         // Create the Personalizaciones, which fails.
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
 
         restPersonalizacionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizaciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizacionesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -156,9 +165,10 @@ class PersonalizacionesResourceIT {
         personalizaciones.setDescripcion(null);
 
         // Create the Personalizaciones, which fails.
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
 
         restPersonalizacionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizaciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizacionesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -216,12 +226,13 @@ class PersonalizacionesResourceIT {
         // Disconnect from session so that the updates on updatedPersonalizaciones are not directly saved in db
         em.detach(updatedPersonalizaciones);
         updatedPersonalizaciones.nombre(UPDATED_NOMBRE).descripcion(UPDATED_DESCRIPCION);
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(updatedPersonalizaciones);
 
         restPersonalizacionesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedPersonalizaciones.getId())
+                put(ENTITY_API_URL_ID, personalizacionesDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedPersonalizaciones))
+                    .content(om.writeValueAsBytes(personalizacionesDTO))
             )
             .andExpect(status().isOk());
 
@@ -236,12 +247,15 @@ class PersonalizacionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         personalizaciones.setId(longCount.incrementAndGet());
 
+        // Create the Personalizaciones
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPersonalizacionesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, personalizaciones.getId())
+                put(ENTITY_API_URL_ID, personalizacionesDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(personalizaciones))
+                    .content(om.writeValueAsBytes(personalizacionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -255,12 +269,15 @@ class PersonalizacionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         personalizaciones.setId(longCount.incrementAndGet());
 
+        // Create the Personalizaciones
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPersonalizacionesMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(personalizaciones))
+                    .content(om.writeValueAsBytes(personalizacionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -274,9 +291,12 @@ class PersonalizacionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         personalizaciones.setId(longCount.incrementAndGet());
 
+        // Create the Personalizaciones
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPersonalizacionesMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizaciones)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(personalizacionesDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Personalizaciones in the database
@@ -351,12 +371,15 @@ class PersonalizacionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         personalizaciones.setId(longCount.incrementAndGet());
 
+        // Create the Personalizaciones
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPersonalizacionesMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, personalizaciones.getId())
+                patch(ENTITY_API_URL_ID, personalizacionesDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(personalizaciones))
+                    .content(om.writeValueAsBytes(personalizacionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -370,12 +393,15 @@ class PersonalizacionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         personalizaciones.setId(longCount.incrementAndGet());
 
+        // Create the Personalizaciones
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPersonalizacionesMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(personalizaciones))
+                    .content(om.writeValueAsBytes(personalizacionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -389,9 +415,12 @@ class PersonalizacionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         personalizaciones.setId(longCount.incrementAndGet());
 
+        // Create the Personalizaciones
+        PersonalizacionesDTO personalizacionesDTO = personalizacionesMapper.toDto(personalizaciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPersonalizacionesMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(personalizaciones)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(personalizacionesDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Personalizaciones in the database

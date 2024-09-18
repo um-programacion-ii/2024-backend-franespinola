@@ -2,6 +2,8 @@ package ar.edu.um.programacion2.service;
 
 import ar.edu.um.programacion2.domain.Dispositivos;
 import ar.edu.um.programacion2.repository.DispositivosRepository;
+import ar.edu.um.programacion2.service.dto.DispositivosDTO;
+import ar.edu.um.programacion2.service.mapper.DispositivosMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,63 +23,57 @@ public class DispositivosService {
 
     private final DispositivosRepository dispositivosRepository;
 
-    public DispositivosService(DispositivosRepository dispositivosRepository) {
+    private final DispositivosMapper dispositivosMapper;
+
+    public DispositivosService(DispositivosRepository dispositivosRepository, DispositivosMapper dispositivosMapper) {
         this.dispositivosRepository = dispositivosRepository;
+        this.dispositivosMapper = dispositivosMapper;
     }
 
     /**
      * Save a dispositivos.
      *
-     * @param dispositivos the entity to save.
+     * @param dispositivosDTO the entity to save.
      * @return the persisted entity.
      */
-    public Dispositivos save(Dispositivos dispositivos) {
-        LOG.debug("Request to save Dispositivos : {}", dispositivos);
-        return dispositivosRepository.save(dispositivos);
+    public DispositivosDTO save(DispositivosDTO dispositivosDTO) {
+        LOG.debug("Request to save Dispositivos : {}", dispositivosDTO);
+        Dispositivos dispositivos = dispositivosMapper.toEntity(dispositivosDTO);
+        dispositivos = dispositivosRepository.save(dispositivos);
+        return dispositivosMapper.toDto(dispositivos);
     }
 
     /**
      * Update a dispositivos.
      *
-     * @param dispositivos the entity to save.
+     * @param dispositivosDTO the entity to save.
      * @return the persisted entity.
      */
-    public Dispositivos update(Dispositivos dispositivos) {
-        LOG.debug("Request to update Dispositivos : {}", dispositivos);
-        return dispositivosRepository.save(dispositivos);
+    public DispositivosDTO update(DispositivosDTO dispositivosDTO) {
+        LOG.debug("Request to update Dispositivos : {}", dispositivosDTO);
+        Dispositivos dispositivos = dispositivosMapper.toEntity(dispositivosDTO);
+        dispositivos = dispositivosRepository.save(dispositivos);
+        return dispositivosMapper.toDto(dispositivos);
     }
 
     /**
      * Partially update a dispositivos.
      *
-     * @param dispositivos the entity to update partially.
+     * @param dispositivosDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Dispositivos> partialUpdate(Dispositivos dispositivos) {
-        LOG.debug("Request to partially update Dispositivos : {}", dispositivos);
+    public Optional<DispositivosDTO> partialUpdate(DispositivosDTO dispositivosDTO) {
+        LOG.debug("Request to partially update Dispositivos : {}", dispositivosDTO);
 
         return dispositivosRepository
-            .findById(dispositivos.getId())
+            .findById(dispositivosDTO.getId())
             .map(existingDispositivos -> {
-                if (dispositivos.getCodigo() != null) {
-                    existingDispositivos.setCodigo(dispositivos.getCodigo());
-                }
-                if (dispositivos.getNombre() != null) {
-                    existingDispositivos.setNombre(dispositivos.getNombre());
-                }
-                if (dispositivos.getDescripcion() != null) {
-                    existingDispositivos.setDescripcion(dispositivos.getDescripcion());
-                }
-                if (dispositivos.getPrecioBase() != null) {
-                    existingDispositivos.setPrecioBase(dispositivos.getPrecioBase());
-                }
-                if (dispositivos.getMoneda() != null) {
-                    existingDispositivos.setMoneda(dispositivos.getMoneda());
-                }
+                dispositivosMapper.partialUpdate(existingDispositivos, dispositivosDTO);
 
                 return existingDispositivos;
             })
-            .map(dispositivosRepository::save);
+            .map(dispositivosRepository::save)
+            .map(dispositivosMapper::toDto);
     }
 
     /**
@@ -87,9 +83,9 @@ public class DispositivosService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Dispositivos> findAll(Pageable pageable) {
+    public Page<DispositivosDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Dispositivos");
-        return dispositivosRepository.findAll(pageable);
+        return dispositivosRepository.findAll(pageable).map(dispositivosMapper::toDto);
     }
 
     /**
@@ -99,9 +95,9 @@ public class DispositivosService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Dispositivos> findOne(Long id) {
+    public Optional<DispositivosDTO> findOne(Long id) {
         LOG.debug("Request to get Dispositivos : {}", id);
-        return dispositivosRepository.findById(id);
+        return dispositivosRepository.findById(id).map(dispositivosMapper::toDto);
     }
 
     /**

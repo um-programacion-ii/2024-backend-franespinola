@@ -1,8 +1,9 @@
 {
   "annotations": {
-    "changelogDate": "20240918031058"
+    "changelogDate": "20240918032207"
   },
   "applications": ["demo1"],
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "nombre",

@@ -12,6 +12,8 @@ import ar.edu.um.programacion2.IntegrationTest;
 import ar.edu.um.programacion2.domain.Opciones;
 import ar.edu.um.programacion2.domain.Personalizaciones;
 import ar.edu.um.programacion2.repository.OpcionesRepository;
+import ar.edu.um.programacion2.service.dto.OpcionesDTO;
+import ar.edu.um.programacion2.service.mapper.OpcionesMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -58,6 +60,9 @@ class OpcionesResourceIT {
 
     @Autowired
     private OpcionesRepository opcionesRepository;
+
+    @Autowired
+    private OpcionesMapper opcionesMapper;
 
     @Autowired
     private EntityManager em;
@@ -137,18 +142,20 @@ class OpcionesResourceIT {
     void createOpciones() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Opciones
-        var returnedOpciones = om.readValue(
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+        var returnedOpcionesDTO = om.readValue(
             restOpcionesMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Opciones.class
+            OpcionesDTO.class
         );
 
         // Validate the Opciones in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedOpciones = opcionesMapper.toEntity(returnedOpcionesDTO);
         assertOpcionesUpdatableFieldsEquals(returnedOpciones, getPersistedOpciones(returnedOpciones));
 
         insertedOpciones = returnedOpciones;
@@ -159,12 +166,13 @@ class OpcionesResourceIT {
     void createOpcionesWithExistingId() throws Exception {
         // Create the Opciones with an existing ID
         opciones.setId(1L);
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOpcionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Opciones in the database
@@ -179,9 +187,10 @@ class OpcionesResourceIT {
         opciones.setCodigo(null);
 
         // Create the Opciones, which fails.
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
 
         restOpcionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -195,9 +204,10 @@ class OpcionesResourceIT {
         opciones.setNombre(null);
 
         // Create the Opciones, which fails.
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
 
         restOpcionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -211,9 +221,10 @@ class OpcionesResourceIT {
         opciones.setDescripcion(null);
 
         // Create the Opciones, which fails.
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
 
         restOpcionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -227,9 +238,10 @@ class OpcionesResourceIT {
         opciones.setPrecioAdicional(null);
 
         // Create the Opciones, which fails.
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
 
         restOpcionesMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -295,12 +307,13 @@ class OpcionesResourceIT {
             .nombre(UPDATED_NOMBRE)
             .descripcion(UPDATED_DESCRIPCION)
             .precioAdicional(UPDATED_PRECIO_ADICIONAL);
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(updatedOpciones);
 
         restOpcionesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedOpciones.getId())
+                put(ENTITY_API_URL_ID, opcionesDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedOpciones))
+                    .content(om.writeValueAsBytes(opcionesDTO))
             )
             .andExpect(status().isOk());
 
@@ -315,10 +328,15 @@ class OpcionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         opciones.setId(longCount.incrementAndGet());
 
+        // Create the Opciones
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOpcionesMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, opciones.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones))
+                put(ENTITY_API_URL_ID, opcionesDTO.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(opcionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -332,12 +350,15 @@ class OpcionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         opciones.setId(longCount.incrementAndGet());
 
+        // Create the Opciones
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restOpcionesMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(opciones))
+                    .content(om.writeValueAsBytes(opcionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -351,9 +372,12 @@ class OpcionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         opciones.setId(longCount.incrementAndGet());
 
+        // Create the Opciones
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restOpcionesMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opciones)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Opciones in the database
@@ -426,12 +450,15 @@ class OpcionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         opciones.setId(longCount.incrementAndGet());
 
+        // Create the Opciones
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restOpcionesMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, opciones.getId())
+                patch(ENTITY_API_URL_ID, opcionesDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(opciones))
+                    .content(om.writeValueAsBytes(opcionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -445,12 +472,15 @@ class OpcionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         opciones.setId(longCount.incrementAndGet());
 
+        // Create the Opciones
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restOpcionesMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(opciones))
+                    .content(om.writeValueAsBytes(opcionesDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -464,9 +494,12 @@ class OpcionesResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         opciones.setId(longCount.incrementAndGet());
 
+        // Create the Opciones
+        OpcionesDTO opcionesDTO = opcionesMapper.toDto(opciones);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restOpcionesMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(opciones)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(opcionesDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Opciones in the database

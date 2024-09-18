@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import ar.edu.um.programacion2.IntegrationTest;
 import ar.edu.um.programacion2.domain.Dispositivos;
 import ar.edu.um.programacion2.repository.DispositivosRepository;
+import ar.edu.um.programacion2.service.dto.DispositivosDTO;
+import ar.edu.um.programacion2.service.mapper.DispositivosMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -60,6 +62,9 @@ class DispositivosResourceIT {
 
     @Autowired
     private DispositivosRepository dispositivosRepository;
+
+    @Autowired
+    private DispositivosMapper dispositivosMapper;
 
     @Autowired
     private EntityManager em;
@@ -119,18 +124,20 @@ class DispositivosResourceIT {
     void createDispositivos() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Dispositivos
-        var returnedDispositivos = om.readValue(
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+        var returnedDispositivosDTO = om.readValue(
             restDispositivosMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Dispositivos.class
+            DispositivosDTO.class
         );
 
         // Validate the Dispositivos in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedDispositivos = dispositivosMapper.toEntity(returnedDispositivosDTO);
         assertDispositivosUpdatableFieldsEquals(returnedDispositivos, getPersistedDispositivos(returnedDispositivos));
 
         insertedDispositivos = returnedDispositivos;
@@ -141,12 +148,13 @@ class DispositivosResourceIT {
     void createDispositivosWithExistingId() throws Exception {
         // Create the Dispositivos with an existing ID
         dispositivos.setId(1L);
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restDispositivosMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Dispositivos in the database
@@ -161,9 +169,10 @@ class DispositivosResourceIT {
         dispositivos.setCodigo(null);
 
         // Create the Dispositivos, which fails.
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
 
         restDispositivosMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -177,9 +186,10 @@ class DispositivosResourceIT {
         dispositivos.setNombre(null);
 
         // Create the Dispositivos, which fails.
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
 
         restDispositivosMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -193,9 +203,10 @@ class DispositivosResourceIT {
         dispositivos.setDescripcion(null);
 
         // Create the Dispositivos, which fails.
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
 
         restDispositivosMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -209,9 +220,10 @@ class DispositivosResourceIT {
         dispositivos.setPrecioBase(null);
 
         // Create the Dispositivos, which fails.
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
 
         restDispositivosMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -225,9 +237,10 @@ class DispositivosResourceIT {
         dispositivos.setMoneda(null);
 
         // Create the Dispositivos, which fails.
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
 
         restDispositivosMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -296,12 +309,13 @@ class DispositivosResourceIT {
             .descripcion(UPDATED_DESCRIPCION)
             .precioBase(UPDATED_PRECIO_BASE)
             .moneda(UPDATED_MONEDA);
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(updatedDispositivos);
 
         restDispositivosMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedDispositivos.getId())
+                put(ENTITY_API_URL_ID, dispositivosDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedDispositivos))
+                    .content(om.writeValueAsBytes(dispositivosDTO))
             )
             .andExpect(status().isOk());
 
@@ -316,12 +330,15 @@ class DispositivosResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         dispositivos.setId(longCount.incrementAndGet());
 
+        // Create the Dispositivos
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDispositivosMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, dispositivos.getId())
+                put(ENTITY_API_URL_ID, dispositivosDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(dispositivos))
+                    .content(om.writeValueAsBytes(dispositivosDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -335,12 +352,15 @@ class DispositivosResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         dispositivos.setId(longCount.incrementAndGet());
 
+        // Create the Dispositivos
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDispositivosMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(dispositivos))
+                    .content(om.writeValueAsBytes(dispositivosDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,9 +374,12 @@ class DispositivosResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         dispositivos.setId(longCount.incrementAndGet());
 
+        // Create the Dispositivos
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDispositivosMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivos)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Dispositivos in the database
@@ -433,12 +456,15 @@ class DispositivosResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         dispositivos.setId(longCount.incrementAndGet());
 
+        // Create the Dispositivos
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restDispositivosMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, dispositivos.getId())
+                patch(ENTITY_API_URL_ID, dispositivosDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(dispositivos))
+                    .content(om.writeValueAsBytes(dispositivosDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -452,12 +478,15 @@ class DispositivosResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         dispositivos.setId(longCount.incrementAndGet());
 
+        // Create the Dispositivos
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDispositivosMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(dispositivos))
+                    .content(om.writeValueAsBytes(dispositivosDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -471,9 +500,12 @@ class DispositivosResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         dispositivos.setId(longCount.incrementAndGet());
 
+        // Create the Dispositivos
+        DispositivosDTO dispositivosDTO = dispositivosMapper.toDto(dispositivos);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restDispositivosMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(dispositivos)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(dispositivosDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Dispositivos in the database

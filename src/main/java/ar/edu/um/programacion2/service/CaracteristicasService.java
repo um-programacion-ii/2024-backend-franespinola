@@ -2,6 +2,8 @@ package ar.edu.um.programacion2.service;
 
 import ar.edu.um.programacion2.domain.Caracteristicas;
 import ar.edu.um.programacion2.repository.CaracteristicasRepository;
+import ar.edu.um.programacion2.service.dto.CaracteristicasDTO;
+import ar.edu.um.programacion2.service.mapper.CaracteristicasMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,54 +23,57 @@ public class CaracteristicasService {
 
     private final CaracteristicasRepository caracteristicasRepository;
 
-    public CaracteristicasService(CaracteristicasRepository caracteristicasRepository) {
+    private final CaracteristicasMapper caracteristicasMapper;
+
+    public CaracteristicasService(CaracteristicasRepository caracteristicasRepository, CaracteristicasMapper caracteristicasMapper) {
         this.caracteristicasRepository = caracteristicasRepository;
+        this.caracteristicasMapper = caracteristicasMapper;
     }
 
     /**
      * Save a caracteristicas.
      *
-     * @param caracteristicas the entity to save.
+     * @param caracteristicasDTO the entity to save.
      * @return the persisted entity.
      */
-    public Caracteristicas save(Caracteristicas caracteristicas) {
-        LOG.debug("Request to save Caracteristicas : {}", caracteristicas);
-        return caracteristicasRepository.save(caracteristicas);
+    public CaracteristicasDTO save(CaracteristicasDTO caracteristicasDTO) {
+        LOG.debug("Request to save Caracteristicas : {}", caracteristicasDTO);
+        Caracteristicas caracteristicas = caracteristicasMapper.toEntity(caracteristicasDTO);
+        caracteristicas = caracteristicasRepository.save(caracteristicas);
+        return caracteristicasMapper.toDto(caracteristicas);
     }
 
     /**
      * Update a caracteristicas.
      *
-     * @param caracteristicas the entity to save.
+     * @param caracteristicasDTO the entity to save.
      * @return the persisted entity.
      */
-    public Caracteristicas update(Caracteristicas caracteristicas) {
-        LOG.debug("Request to update Caracteristicas : {}", caracteristicas);
-        return caracteristicasRepository.save(caracteristicas);
+    public CaracteristicasDTO update(CaracteristicasDTO caracteristicasDTO) {
+        LOG.debug("Request to update Caracteristicas : {}", caracteristicasDTO);
+        Caracteristicas caracteristicas = caracteristicasMapper.toEntity(caracteristicasDTO);
+        caracteristicas = caracteristicasRepository.save(caracteristicas);
+        return caracteristicasMapper.toDto(caracteristicas);
     }
 
     /**
      * Partially update a caracteristicas.
      *
-     * @param caracteristicas the entity to update partially.
+     * @param caracteristicasDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Caracteristicas> partialUpdate(Caracteristicas caracteristicas) {
-        LOG.debug("Request to partially update Caracteristicas : {}", caracteristicas);
+    public Optional<CaracteristicasDTO> partialUpdate(CaracteristicasDTO caracteristicasDTO) {
+        LOG.debug("Request to partially update Caracteristicas : {}", caracteristicasDTO);
 
         return caracteristicasRepository
-            .findById(caracteristicas.getId())
+            .findById(caracteristicasDTO.getId())
             .map(existingCaracteristicas -> {
-                if (caracteristicas.getNombre() != null) {
-                    existingCaracteristicas.setNombre(caracteristicas.getNombre());
-                }
-                if (caracteristicas.getDescripcion() != null) {
-                    existingCaracteristicas.setDescripcion(caracteristicas.getDescripcion());
-                }
+                caracteristicasMapper.partialUpdate(existingCaracteristicas, caracteristicasDTO);
 
                 return existingCaracteristicas;
             })
-            .map(caracteristicasRepository::save);
+            .map(caracteristicasRepository::save)
+            .map(caracteristicasMapper::toDto);
     }
 
     /**
@@ -78,9 +83,9 @@ public class CaracteristicasService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Caracteristicas> findAll(Pageable pageable) {
+    public Page<CaracteristicasDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Caracteristicas");
-        return caracteristicasRepository.findAll(pageable);
+        return caracteristicasRepository.findAll(pageable).map(caracteristicasMapper::toDto);
     }
 
     /**
@@ -90,9 +95,9 @@ public class CaracteristicasService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Caracteristicas> findOne(Long id) {
+    public Optional<CaracteristicasDTO> findOne(Long id) {
         LOG.debug("Request to get Caracteristicas : {}", id);
-        return caracteristicasRepository.findById(id);
+        return caracteristicasRepository.findById(id).map(caracteristicasMapper::toDto);
     }
 
     /**

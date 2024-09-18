@@ -1,8 +1,8 @@
 package ar.edu.um.programacion2.web.rest;
 
-import ar.edu.um.programacion2.domain.Adicionales;
 import ar.edu.um.programacion2.repository.AdicionalesRepository;
 import ar.edu.um.programacion2.service.AdicionalesService;
+import ar.edu.um.programacion2.service.dto.AdicionalesDTO;
 import ar.edu.um.programacion2.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -50,42 +50,42 @@ public class AdicionalesResource {
     /**
      * {@code POST  /adicionales} : Create a new adicionales.
      *
-     * @param adicionales the adicionales to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new adicionales, or with status {@code 400 (Bad Request)} if the adicionales has already an ID.
+     * @param adicionalesDTO the adicionalesDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new adicionalesDTO, or with status {@code 400 (Bad Request)} if the adicionales has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<Adicionales> createAdicionales(@Valid @RequestBody Adicionales adicionales) throws URISyntaxException {
-        LOG.debug("REST request to save Adicionales : {}", adicionales);
-        if (adicionales.getId() != null) {
+    public ResponseEntity<AdicionalesDTO> createAdicionales(@Valid @RequestBody AdicionalesDTO adicionalesDTO) throws URISyntaxException {
+        LOG.debug("REST request to save Adicionales : {}", adicionalesDTO);
+        if (adicionalesDTO.getId() != null) {
             throw new BadRequestAlertException("A new adicionales cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        adicionales = adicionalesService.save(adicionales);
-        return ResponseEntity.created(new URI("/api/adicionales/" + adicionales.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, adicionales.getId().toString()))
-            .body(adicionales);
+        adicionalesDTO = adicionalesService.save(adicionalesDTO);
+        return ResponseEntity.created(new URI("/api/adicionales/" + adicionalesDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, adicionalesDTO.getId().toString()))
+            .body(adicionalesDTO);
     }
 
     /**
      * {@code PUT  /adicionales/:id} : Updates an existing adicionales.
      *
-     * @param id the id of the adicionales to save.
-     * @param adicionales the adicionales to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated adicionales,
-     * or with status {@code 400 (Bad Request)} if the adicionales is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the adicionales couldn't be updated.
+     * @param id the id of the adicionalesDTO to save.
+     * @param adicionalesDTO the adicionalesDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated adicionalesDTO,
+     * or with status {@code 400 (Bad Request)} if the adicionalesDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the adicionalesDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Adicionales> updateAdicionales(
+    public ResponseEntity<AdicionalesDTO> updateAdicionales(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Adicionales adicionales
+        @Valid @RequestBody AdicionalesDTO adicionalesDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to update Adicionales : {}, {}", id, adicionales);
-        if (adicionales.getId() == null) {
+        LOG.debug("REST request to update Adicionales : {}, {}", id, adicionalesDTO);
+        if (adicionalesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, adicionales.getId())) {
+        if (!Objects.equals(id, adicionalesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -93,33 +93,33 @@ public class AdicionalesResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        adicionales = adicionalesService.update(adicionales);
+        adicionalesDTO = adicionalesService.update(adicionalesDTO);
         return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, adicionales.getId().toString()))
-            .body(adicionales);
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, adicionalesDTO.getId().toString()))
+            .body(adicionalesDTO);
     }
 
     /**
      * {@code PATCH  /adicionales/:id} : Partial updates given fields of an existing adicionales, field will ignore if it is null
      *
-     * @param id the id of the adicionales to save.
-     * @param adicionales the adicionales to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated adicionales,
-     * or with status {@code 400 (Bad Request)} if the adicionales is not valid,
-     * or with status {@code 404 (Not Found)} if the adicionales is not found,
-     * or with status {@code 500 (Internal Server Error)} if the adicionales couldn't be updated.
+     * @param id the id of the adicionalesDTO to save.
+     * @param adicionalesDTO the adicionalesDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated adicionalesDTO,
+     * or with status {@code 400 (Bad Request)} if the adicionalesDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the adicionalesDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the adicionalesDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Adicionales> partialUpdateAdicionales(
+    public ResponseEntity<AdicionalesDTO> partialUpdateAdicionales(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Adicionales adicionales
+        @NotNull @RequestBody AdicionalesDTO adicionalesDTO
     ) throws URISyntaxException {
-        LOG.debug("REST request to partial update Adicionales partially : {}, {}", id, adicionales);
-        if (adicionales.getId() == null) {
+        LOG.debug("REST request to partial update Adicionales partially : {}, {}", id, adicionalesDTO);
+        if (adicionalesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, adicionales.getId())) {
+        if (!Objects.equals(id, adicionalesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -127,11 +127,11 @@ public class AdicionalesResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Adicionales> result = adicionalesService.partialUpdate(adicionales);
+        Optional<AdicionalesDTO> result = adicionalesService.partialUpdate(adicionalesDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, adicionales.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, adicionalesDTO.getId().toString())
         );
     }
 
@@ -142,9 +142,9 @@ public class AdicionalesResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of adicionales in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<Adicionales>> getAllAdicionales(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<AdicionalesDTO>> getAllAdicionales(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get a page of Adicionales");
-        Page<Adicionales> page = adicionalesService.findAll(pageable);
+        Page<AdicionalesDTO> page = adicionalesService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -152,20 +152,20 @@ public class AdicionalesResource {
     /**
      * {@code GET  /adicionales/:id} : get the "id" adicionales.
      *
-     * @param id the id of the adicionales to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the adicionales, or with status {@code 404 (Not Found)}.
+     * @param id the id of the adicionalesDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the adicionalesDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Adicionales> getAdicionales(@PathVariable("id") Long id) {
+    public ResponseEntity<AdicionalesDTO> getAdicionales(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Adicionales : {}", id);
-        Optional<Adicionales> adicionales = adicionalesService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(adicionales);
+        Optional<AdicionalesDTO> adicionalesDTO = adicionalesService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(adicionalesDTO);
     }
 
     /**
      * {@code DELETE  /adicionales/:id} : delete the "id" adicionales.
      *
-     * @param id the id of the adicionales to delete.
+     * @param id the id of the adicionalesDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")

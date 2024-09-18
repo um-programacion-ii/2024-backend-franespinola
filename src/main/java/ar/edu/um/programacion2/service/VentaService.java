@@ -2,6 +2,8 @@ package ar.edu.um.programacion2.service;
 
 import ar.edu.um.programacion2.domain.Venta;
 import ar.edu.um.programacion2.repository.VentaRepository;
+import ar.edu.um.programacion2.service.dto.VentaDTO;
+import ar.edu.um.programacion2.service.mapper.VentaMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,60 +23,57 @@ public class VentaService {
 
     private final VentaRepository ventaRepository;
 
-    public VentaService(VentaRepository ventaRepository) {
+    private final VentaMapper ventaMapper;
+
+    public VentaService(VentaRepository ventaRepository, VentaMapper ventaMapper) {
         this.ventaRepository = ventaRepository;
+        this.ventaMapper = ventaMapper;
     }
 
     /**
      * Save a venta.
      *
-     * @param venta the entity to save.
+     * @param ventaDTO the entity to save.
      * @return the persisted entity.
      */
-    public Venta save(Venta venta) {
-        LOG.debug("Request to save Venta : {}", venta);
-        return ventaRepository.save(venta);
+    public VentaDTO save(VentaDTO ventaDTO) {
+        LOG.debug("Request to save Venta : {}", ventaDTO);
+        Venta venta = ventaMapper.toEntity(ventaDTO);
+        venta = ventaRepository.save(venta);
+        return ventaMapper.toDto(venta);
     }
 
     /**
      * Update a venta.
      *
-     * @param venta the entity to save.
+     * @param ventaDTO the entity to save.
      * @return the persisted entity.
      */
-    public Venta update(Venta venta) {
-        LOG.debug("Request to update Venta : {}", venta);
-        return ventaRepository.save(venta);
+    public VentaDTO update(VentaDTO ventaDTO) {
+        LOG.debug("Request to update Venta : {}", ventaDTO);
+        Venta venta = ventaMapper.toEntity(ventaDTO);
+        venta = ventaRepository.save(venta);
+        return ventaMapper.toDto(venta);
     }
 
     /**
      * Partially update a venta.
      *
-     * @param venta the entity to update partially.
+     * @param ventaDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Venta> partialUpdate(Venta venta) {
-        LOG.debug("Request to partially update Venta : {}", venta);
+    public Optional<VentaDTO> partialUpdate(VentaDTO ventaDTO) {
+        LOG.debug("Request to partially update Venta : {}", ventaDTO);
 
         return ventaRepository
-            .findById(venta.getId())
+            .findById(ventaDTO.getId())
             .map(existingVenta -> {
-                if (venta.getPrecioFinal() != null) {
-                    existingVenta.setPrecioFinal(venta.getPrecioFinal());
-                }
-                if (venta.getFechaVenta() != null) {
-                    existingVenta.setFechaVenta(venta.getFechaVenta());
-                }
-                if (venta.getPrecioPersonalizaciones() != null) {
-                    existingVenta.setPrecioPersonalizaciones(venta.getPrecioPersonalizaciones());
-                }
-                if (venta.getPrecioAdicionales() != null) {
-                    existingVenta.setPrecioAdicionales(venta.getPrecioAdicionales());
-                }
+                ventaMapper.partialUpdate(existingVenta, ventaDTO);
 
                 return existingVenta;
             })
-            .map(ventaRepository::save);
+            .map(ventaRepository::save)
+            .map(ventaMapper::toDto);
     }
 
     /**
@@ -84,9 +83,9 @@ public class VentaService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Venta> findAll(Pageable pageable) {
+    public Page<VentaDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Ventas");
-        return ventaRepository.findAll(pageable);
+        return ventaRepository.findAll(pageable).map(ventaMapper::toDto);
     }
 
     /**
@@ -94,8 +93,8 @@ public class VentaService {
      *
      * @return the list of entities.
      */
-    public Page<Venta> findAllWithEagerRelationships(Pageable pageable) {
-        return ventaRepository.findAllWithEagerRelationships(pageable);
+    public Page<VentaDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return ventaRepository.findAllWithEagerRelationships(pageable).map(ventaMapper::toDto);
     }
 
     /**
@@ -105,9 +104,9 @@ public class VentaService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Venta> findOne(Long id) {
+    public Optional<VentaDTO> findOne(Long id) {
         LOG.debug("Request to get Venta : {}", id);
-        return ventaRepository.findOneWithEagerRelationships(id);
+        return ventaRepository.findOneWithEagerRelationships(id).map(ventaMapper::toDto);
     }
 
     /**

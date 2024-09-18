@@ -2,6 +2,8 @@ package ar.edu.um.programacion2.service;
 
 import ar.edu.um.programacion2.domain.Personalizaciones;
 import ar.edu.um.programacion2.repository.PersonalizacionesRepository;
+import ar.edu.um.programacion2.service.dto.PersonalizacionesDTO;
+import ar.edu.um.programacion2.service.mapper.PersonalizacionesMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,54 +23,60 @@ public class PersonalizacionesService {
 
     private final PersonalizacionesRepository personalizacionesRepository;
 
-    public PersonalizacionesService(PersonalizacionesRepository personalizacionesRepository) {
+    private final PersonalizacionesMapper personalizacionesMapper;
+
+    public PersonalizacionesService(
+        PersonalizacionesRepository personalizacionesRepository,
+        PersonalizacionesMapper personalizacionesMapper
+    ) {
         this.personalizacionesRepository = personalizacionesRepository;
+        this.personalizacionesMapper = personalizacionesMapper;
     }
 
     /**
      * Save a personalizaciones.
      *
-     * @param personalizaciones the entity to save.
+     * @param personalizacionesDTO the entity to save.
      * @return the persisted entity.
      */
-    public Personalizaciones save(Personalizaciones personalizaciones) {
-        LOG.debug("Request to save Personalizaciones : {}", personalizaciones);
-        return personalizacionesRepository.save(personalizaciones);
+    public PersonalizacionesDTO save(PersonalizacionesDTO personalizacionesDTO) {
+        LOG.debug("Request to save Personalizaciones : {}", personalizacionesDTO);
+        Personalizaciones personalizaciones = personalizacionesMapper.toEntity(personalizacionesDTO);
+        personalizaciones = personalizacionesRepository.save(personalizaciones);
+        return personalizacionesMapper.toDto(personalizaciones);
     }
 
     /**
      * Update a personalizaciones.
      *
-     * @param personalizaciones the entity to save.
+     * @param personalizacionesDTO the entity to save.
      * @return the persisted entity.
      */
-    public Personalizaciones update(Personalizaciones personalizaciones) {
-        LOG.debug("Request to update Personalizaciones : {}", personalizaciones);
-        return personalizacionesRepository.save(personalizaciones);
+    public PersonalizacionesDTO update(PersonalizacionesDTO personalizacionesDTO) {
+        LOG.debug("Request to update Personalizaciones : {}", personalizacionesDTO);
+        Personalizaciones personalizaciones = personalizacionesMapper.toEntity(personalizacionesDTO);
+        personalizaciones = personalizacionesRepository.save(personalizaciones);
+        return personalizacionesMapper.toDto(personalizaciones);
     }
 
     /**
      * Partially update a personalizaciones.
      *
-     * @param personalizaciones the entity to update partially.
+     * @param personalizacionesDTO the entity to update partially.
      * @return the persisted entity.
      */
-    public Optional<Personalizaciones> partialUpdate(Personalizaciones personalizaciones) {
-        LOG.debug("Request to partially update Personalizaciones : {}", personalizaciones);
+    public Optional<PersonalizacionesDTO> partialUpdate(PersonalizacionesDTO personalizacionesDTO) {
+        LOG.debug("Request to partially update Personalizaciones : {}", personalizacionesDTO);
 
         return personalizacionesRepository
-            .findById(personalizaciones.getId())
+            .findById(personalizacionesDTO.getId())
             .map(existingPersonalizaciones -> {
-                if (personalizaciones.getNombre() != null) {
-                    existingPersonalizaciones.setNombre(personalizaciones.getNombre());
-                }
-                if (personalizaciones.getDescripcion() != null) {
-                    existingPersonalizaciones.setDescripcion(personalizaciones.getDescripcion());
-                }
+                personalizacionesMapper.partialUpdate(existingPersonalizaciones, personalizacionesDTO);
 
                 return existingPersonalizaciones;
             })
-            .map(personalizacionesRepository::save);
+            .map(personalizacionesRepository::save)
+            .map(personalizacionesMapper::toDto);
     }
 
     /**
@@ -78,9 +86,9 @@ public class PersonalizacionesService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Personalizaciones> findAll(Pageable pageable) {
+    public Page<PersonalizacionesDTO> findAll(Pageable pageable) {
         LOG.debug("Request to get all Personalizaciones");
-        return personalizacionesRepository.findAll(pageable);
+        return personalizacionesRepository.findAll(pageable).map(personalizacionesMapper::toDto);
     }
 
     /**
@@ -90,9 +98,9 @@ public class PersonalizacionesService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Personalizaciones> findOne(Long id) {
+    public Optional<PersonalizacionesDTO> findOne(Long id) {
         LOG.debug("Request to get Personalizaciones : {}", id);
-        return personalizacionesRepository.findById(id);
+        return personalizacionesRepository.findById(id).map(personalizacionesMapper::toDto);
     }
 
     /**
