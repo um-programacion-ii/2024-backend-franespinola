@@ -65,21 +65,8 @@ relationship ManyToOne {
 }
 
 
-paginate Dispositivo with infinite-scroll
-paginate Caracteristica with infinite-scroll
-paginate Personalizacion with infinite-scroll
-paginate Opcion with infinite-scroll
-paginate Adicional with infinite-scroll
+paginate Dispositivo, Caracteristica, Personalizacion, Opcion,Adicional with infinite-scroll
+service Dispositivo, Caracteristica, Personalizacion, Opcion, Adicional with serviceClass
+dto Dispositivo, Caracteristica, Personalizacion, Opcion, Adicional with mapstruct
 
-service Dispositivo with serviceClass
-service Caracteristica with serviceClass
-service Personalizacion with serviceClass
-service Opcion with serviceClass
-service Adicional with serviceClass
-
-dto Dispositivo with mapstruct
-dto Caracteristica with mapstruct
-dto Personalizacion with mapstruct
-dto Opcion with mapstruct
-dto Adicional with mapstruct
 
