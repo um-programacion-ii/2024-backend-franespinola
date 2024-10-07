@@ -1,0 +1,25 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "servidorApi",
+    "buildTool": "maven",
+    "cacheProvider": "ehcache",
+    "clientFramework": "react",
+    "clientTheme": "none",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "devServerPort": 9060,
+    "enableHibernateCache": true,
+    "enableTranslation": true,
+    "entities": ["Dispositivo", "Caracteristica", "Personalizacion", "Opcion", "Adicional"],
+    "jhipsterVersion": "8.7.0",
+    "jwtSecretKey": "NmU4MmYwMjAwZjM5NzJjYzgzNjQ5OGEyOWRlY2M5Yjk1ZTRjNzAxMmZkZjU2NWNlNmNmZTA0ZTY0N2FhMjY3ZDg0NjBkZmRmOTdmNDliNzYyODk0NGM5YTM3YTQwNDZjMjQwODVjZjgyOGQyOTJkYmYzNTI4NWQwMWUzYTEyMTg=",
+    "languages": ["en"],
+    "lastLiquibaseTimestamp": 1728339119000,
+    "nativeLanguage": "en",
+    "packageFolder": "ar/edu/um/programacion2",
+    "packageName": "ar.edu.um.programacion2",
+    "prodDatabaseType": "mysql"
+  }
+}

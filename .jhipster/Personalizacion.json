@@ -1,0 +1,32 @@
+{
+  "annotations": {
+    "changelogDate": "20241007220959"
+  },
+  "applications": ["servidorApi"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Personalizacion",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "dispositivo",
+      "relationshipName": "dispositivo",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,43 @@
+{
+  "annotations": {
+    "changelogDate": "20241007221059"
+  },
+  "applications": ["servidorApi"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "codigo",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "precioAdicional",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    }
+  ],
+  "name": "Opcion",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "personalizacion",
+      "relationshipName": "personalizacion",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

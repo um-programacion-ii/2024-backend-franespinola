@@ -61,7 +61,7 @@ relationship ManyToOne {
   Caracteristica{dispositivo required} to Dispositivo,
   Opcion{personalizacion required} to Personalizacion,
   Personalizacion{dispositivo required} to Dispositivo,
-  Adicional{dispositivo required} to Dispositivo,
+  Adicional{dispositivo required} to Dispositivo
 }
 
 
