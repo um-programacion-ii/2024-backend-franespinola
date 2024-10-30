@@ -25,6 +25,10 @@ public class Dispositivo implements Serializable {
     private Long id;
 
     @NotNull
+    @Column(name = "idExterno", nullable = true)
+    private Long idExterno;
+
+    @NotNull
     @Column(name = "codigo", nullable = false)
     private String codigo;
 
@@ -126,6 +130,14 @@ public class Dispositivo implements Serializable {
         this.moneda = moneda;
     }
 
+    public Long getIdExterno() {
+        return this.idExterno;
+    }
+
+    public void setIdExterno(Long idExterno) {
+        this.idExterno = idExterno;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -150,6 +162,7 @@ public class Dispositivo implements Serializable {
     public String toString() {
         return "Dispositivo{" +
             "id=" + getId() +
+            "idExterno=" + getIdExterno() +
             ", codigo='" + getCodigo() + "'" +
             ", nombre='" + getNombre() + "'" +
             ", descripcion='" + getDescripcion() + "'" +

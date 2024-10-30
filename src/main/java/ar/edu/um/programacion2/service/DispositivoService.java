@@ -185,6 +185,7 @@ public class DispositivoService {
             if (dispositivoExistenteOpt.isPresent()) {
                 // 2. Si existe, actualizar valores
                 dispositivo = dispositivoExistenteOpt.get();
+                dispositivo.setIdExterno(dispositivoExterno.getId());
                 dispositivo.setNombre(dispositivoExterno.getNombre());
                 dispositivo.setDescripcion(dispositivoExterno.getDescripcion());
                 dispositivo.setPrecioBase(dispositivoExterno.getPrecioBase());
@@ -192,6 +193,7 @@ public class DispositivoService {
             } else {
                 // 3. Si no existe, crear nuevo dispositivo
                 dispositivo = new Dispositivo();
+                dispositivo.setIdExterno(dispositivoExterno.getId());
                 dispositivo.setCodigo(dispositivoExterno.getCodigo());
                 dispositivo.setNombre(dispositivoExterno.getNombre());
                 dispositivo.setDescripcion(dispositivoExterno.getDescripcion());
