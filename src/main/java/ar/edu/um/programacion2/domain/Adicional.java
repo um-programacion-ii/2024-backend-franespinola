@@ -24,6 +24,10 @@ public class Adicional implements Serializable {
     private Long id;
 
     @NotNull
+    @Column(name = "idExterno", nullable = true)
+    private Long idExterno;
+
+    @NotNull
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
@@ -125,6 +129,14 @@ public class Adicional implements Serializable {
         return this;
     }
 
+    public Long getIdExterno() {
+        return idExterno;
+    }
+
+    public void setIdExterno(Long idExterno) {
+        this.idExterno = idExterno;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -149,6 +161,7 @@ public class Adicional implements Serializable {
     public String toString() {
         return "Adicional{" +
             "id=" + getId() +
+            ", idExterno=" + getIdExterno() +
             ", nombre='" + getNombre() + "'" +
             ", descripcion='" + getDescripcion() + "'" +
             ", precio=" + getPrecio() +

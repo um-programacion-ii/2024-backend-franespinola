@@ -208,7 +208,7 @@ public class DispositivoService {
                 Caracteristica caracteristica = caracteristicaRepository
                     .findByNombreAndDispositivo(caracteristicaDTO.getNombre(), dispositivoGuardado)
                     .orElse(new Caracteristica());
-
+                caracteristica.setIdExterno(caracteristicaDTO.getId()); // Sincronizar idExterno
                 caracteristica.setNombre(caracteristicaDTO.getNombre());
                 caracteristica.setDescripcion(caracteristicaDTO.getDescripcion());
                 caracteristica.setDispositivo(dispositivoGuardado);
@@ -220,7 +220,7 @@ public class DispositivoService {
                 Personalizacion personalizacion = personalizacionRepository
                     .findByNombreAndDispositivo(personalizacionDTO.getNombre(), dispositivoGuardado)
                     .orElse(new Personalizacion());
-
+                personalizacion.setIdExterno(personalizacionDTO.getId()); // Sincronizar idExterno
                 personalizacion.setNombre(personalizacionDTO.getNombre());
                 personalizacion.setDescripcion(personalizacionDTO.getDescripcion());
                 personalizacion.setDispositivo(dispositivoGuardado);
@@ -231,7 +231,7 @@ public class DispositivoService {
                     Opcion opcion = opcionRepository
                         .findByCodigoAndPersonalizacion(opcionDTO.getCodigo(), personalizacionGuardada)
                         .orElse(new Opcion());
-
+                    opcion.setIdExterno(opcionDTO.getId()); // Sincronizar idExterno
                     opcion.setCodigo(opcionDTO.getCodigo());
                     opcion.setNombre(opcionDTO.getNombre());
                     opcion.setDescripcion(opcionDTO.getDescripcion());
@@ -246,7 +246,7 @@ public class DispositivoService {
                 Adicional adicional = adicionalRepository
                     .findByNombreAndDispositivo(adicionalDTO.getNombre(), dispositivoGuardado)
                     .orElse(new Adicional());
-
+                adicional.setIdExterno(adicionalDTO.getId()); // Sincronizar idExterno
                 adicional.setNombre(adicionalDTO.getNombre());
                 adicional.setDescripcion(adicionalDTO.getDescripcion());
                 adicional.setPrecio(adicionalDTO.getPrecio());
