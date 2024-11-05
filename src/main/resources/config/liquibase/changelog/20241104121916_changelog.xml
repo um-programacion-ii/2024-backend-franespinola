@@ -28,7 +28,4 @@
             </column>
         </addColumn>
     </changeSet>
-    <changeSet author="frane (generated)" id="1730722761109-1">
-        <addNotNullConstraint columnDataType="bigint" columnName="id_externo" tableName="dispositivo" validate="true"/>
-    </changeSet>
 </databaseChangeLog>

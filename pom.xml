@@ -683,11 +683,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>net.nicoulaj.maven.plugins</groupId>
-                    <artifactId>checksum-maven-plugin</artifactId>
-                    <version>${checksum-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
                     <version>${properties-maven-plugin.version}</version>
@@ -1113,57 +1108,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>net.nicoulaj.maven.plugins</groupId>
-                        <artifactId>checksum-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>create-pre-compiled-webapp-checksum</id>
-                                <goals>
-                                    <goal>files</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                            </execution>
-                            <execution>
-                                <id>create-compiled-webapp-checksum</id>
-                                <goals>
-                                    <goal>files</goal>
-                                </goals>
-                                <phase>compile</phase>
-                                <configuration>
-                                    <csvSummaryFile>checksums.csv.old</csvSummaryFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <fileSets>
-                                <fileSet>
-                                    <directory>${project.basedir}</directory>
-                                    <includes>
-                                        <include>src/main/webapp/**/*.*</include>
-                                        <include>target/classes/static/**/*.*</include>
-                                        <include>package-lock.json</include>
-                                        <include>package.json</include>
-                                        <include>tsconfig.json</include>
-                                        <include>.postcss.config.js</include>
-                                        <include>webpack/*.*</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>**/app/**/service-worker.js</exclude>
-                                        <exclude>**/app/**/vendor.css</exclude>
-                                    </excludes>
-                                </fileSet>
-                            </fileSets>
-                            <failOnError>false</failOnError>
-                            <failIfNoFiles>false</failIfNoFiles>
-                            <individualFiles>false</individualFiles>
-                            <algorithms>
-                                <algorithm>SHA-1</algorithm>
-                            </algorithms>
-                            <includeRelativePath>true</includeRelativePath>
-                            <quiet>true</quiet>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
