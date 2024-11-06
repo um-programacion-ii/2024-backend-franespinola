@@ -160,12 +160,12 @@ public class DispositivoService {
 
     public List<DispositivoDTO> traerDispositivos() {
         String token =
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmFuY2lzY28iLCJleHAiOjE3MzUxNDQwNTgsImF1dGgiOiJST0xFX1VTRVIiLCJpYXQiOjE3MjY1MDQwNTh9.uqaAt8lXP8-3V5rNh5guBe7966hravEkH2wTcvJfJ585EBAi4BBFKetnlp4BN8v1zPFW8YHbqDokAtAW_VxYEQ";
+            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmFuY2lzY28iLCJleHAiOjE3Mzk1NjM0ODYsImF1dGgiOiJST0xFX1VTRVIiLCJpYXQiOjE3MzA5MjM0ODZ9.FKX6gcguzQrRjosFJO_tex08Eu3UeDePJzNVTF8zn3Q1JsiriUX4LnobwU24Z8J0LBUSaAsy7P5C7vEbpcR7Pw";
         WebClient webClient = webClientBuilder.build();
 
         Mono<DispositivoExternoDTO[]> response = webClient
             .get()
-            .uri("http://192.168.194.254:8080/api/catedra/dispositivos")
+            .uri("http://10.145.1.1:8080/api/catedra/dispositivos")
             .header("Authorization", "Bearer " + token)
             .retrieve()
             .bodyToMono(DispositivoExternoDTO[].class);
